@@ -8,7 +8,42 @@ from .models import *
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "all_listings": Listing.objects.all()
+    })
+
+
+def listing(request, list_id):
+    current_listing = Listing.objects.get(id=list_id)
+
+
+
+
+
+def new_listing(request):
+    all_category = Category.objects.all()
+    current_user = request.user
+    if request.method == "POST":
+        title = request.POST["title"]
+        content = request.POST["content"]
+        b_user = Bid(user=current_user, bid=request.POST["bid"])
+        b_user.save()
+        url = request.POST["url"]
+        category = Category.objects.get(name=request.POST["category"])
+        new_list = Listing(
+            title=title,
+            content=content,
+            start_bid=b_user,
+            url=url,
+            category=category
+        )
+        new_list.save()
+        return HttpResponseRedirect(reverse("index"))
+
+    return render(request, "auctions/newlisting.html", {
+        "title": "Create new Listing",
+        "all_category":  all_category
+    })
 
 
 def login_view(request):

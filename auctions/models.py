@@ -7,8 +7,6 @@ class User(AbstractUser):
         return f"{self.username}"
 
 
-
-
 class Bid(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE, blank=True, null=True, related_name="user_bid")
     bid = models.IntegerField(default=0)
