@@ -39,6 +39,39 @@
                 <p>{{ listing.content }}</p>
             </div>
         </div>
+        <br>
+        <br>
+        <div>
+            <div>
+                <form action="{% url 'comment' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-floating">
+                        <label for="area">Comments:</label>
+                        <input type="hidden" name="id" value="{{ listing.id }}">
+                      <textarea class="form-control" name="comment" placeholder="Leave a comment here:" id="area" style="height: 130px"></textarea>
+                        <br>
+                        <button class="btn btn-info" type="submit">Add comment</button>
+                    </div>
+                </form>
+            </div>
+            <br>
+            {% if check %}
+                {% for comment in comments %}
+                    <div class="card" style="width: 25rem;">
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Left by {{ comment.user }}.</li>
+                        <li class="list-group-item">{{ comment.text }}</li>
+                      </ul>
+                    </div>
+                    <br>
+                {% endfor %}
+            {% endif %}
+            <hr>
+            <h3>Details</h3>
+            <ul>
+                <li>Listed by: </li>
+            </ul>
+        </div>
     </div>
 
 

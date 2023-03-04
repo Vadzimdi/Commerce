@@ -31,6 +31,7 @@ class Listing(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     url = models.CharField(max_length=500)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True, related_name="category")
+    owner = models.ForeignKey('User', on_delete=models.CASCADE, blank=True, null=True, related_name="listing_owner")
     watchlist = models.ManyToManyField('User', blank=True, related_name="watch_list")
     comments = models.ManyToManyField('Comments', blank=True, related_name="comments")
 

@@ -20,9 +20,18 @@ def listing(request, list_id):
         x = True
     else:
         x = False
+    com = current_listing.comments.all()
+    try:
+        c = com[0]
+        c = True
+    except BaseException:
+        c = False
+
     return render(request, "auctions/cur_listing.html", {
         "listing": current_listing,
-        "user_in_watchlist": x
+        "user_in_watchlist": x,
+        "check": c,
+        "comments": com
     })
 
 
@@ -82,6 +91,20 @@ def new_listing(request):
         "title": "Create new Listing",
         "all_category":  all_category
     })
+
+
+def comment(request):
+    if request.method == "POST":
+        current_user = request.user
+        current_comment = request.POST['comment']
+        com = Comments(text=current_comment, user=current_user)
+        com.save()
+        current_listing = Listing.objects.get(pk=request.POST['id'])
+        current_listing.comments.add(com)
+        return HttpResponseRedirect(reverse("listing", args=(request.POST['id'],)))
+
+
+
 
 
 def login_view(request):
