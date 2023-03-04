@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<style>
+    .bt_zo {
+        display:inline-block;
+    }
+</style>
+    <h2>Watchlist</h2>
+            <div class="row row-cols-3 row-cols-md-4 g-3">
+                {% for listing in all_listings %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <a href="{% url 'listing' listing.id %}"><img src="{{ listing.url }}" class="card-img-top" alt="Photo"></a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">{{ listing.content }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="bt_zo">Price: {{ listing.start_bid }}$</div>
+                            <div class="bt_zo"><form action="{% url 'remove_watchlist' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ listing.id }}">
+                                    <button class="btn btn-info" type="submit">Remove from Watchlist</button>
+                            </form></div>
+                        </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+{% endblock %}

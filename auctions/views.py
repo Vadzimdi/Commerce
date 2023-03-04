@@ -15,9 +15,47 @@ def index(request):
 
 def listing(request, list_id):
     current_listing = Listing.objects.get(id=list_id)
+    user = request.user
+    if user in current_listing.watchlist.all():
+        x = True
+    else:
+        x = False
+    return render(request, "auctions/cur_listing.html", {
+        "listing": current_listing,
+        "user_in_watchlist": x
+    })
 
 
+def show_watchlist(request):
+    all_listings = []
+    for i in Listing.objects.all():
+        print(2)
+        if request.user in i.watchlist.all():
+            print(1)
+            all_listings.append(i)
+    return render(request, "auctions/show_watchlist.html", {
+        "all_listings": all_listings
+    })
 
+
+def watchlist(request):
+    if request.method == "POST":
+        current_user = request.user
+        current_listing = Listing.objects.get(pk=request.POST['id'])
+        if current_user in current_listing.watchlist.all():
+            current_listing.watchlist.remove(current_user)
+            return HttpResponseRedirect(reverse("listing", args=(request.POST['id'], )))
+        else:
+            current_listing.watchlist.add(current_user)
+            return HttpResponseRedirect(reverse("listing", args=(request.POST['id'], )))
+
+
+def remove_watchlist(request):
+    if request.method == "POST":
+        current_user = request.user
+        current_listing = Listing.objects.get(pk=request.POST['id'])
+        current_listing.watchlist.remove(current_user)
+        return HttpResponseRedirect(reverse("show_watchlist"))
 
 
 def new_listing(request):
