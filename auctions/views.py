@@ -8,8 +8,15 @@ from .models import *
 
 
 def index(request):
+    list_all = Listing.objects.all()
+    try:
+        c = list_all[0]
+        c = True
+    except BaseException:
+        c = False
     return render(request, "auctions/index.html", {
-        "all_listings": Listing.objects.all()
+        "all_listings": list_all,
+        "check": c
     })
 
 
