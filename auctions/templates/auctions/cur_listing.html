@@ -37,7 +37,7 @@
             </div>
             <div class="col">
                 <p>{{ listing.content }}</p>
-                <h5>Current bid: {{ listing.start_bid }}$<h5>
+                <h5 style="margin-bottom: 20px;">Current bid: {{ listing.start_bid }}$<h5>
                     {% if alert_message %}
                         <div class="alert alert-danger" style="font-size: 14px;" role="alert">
                           {{ alert_message }}
@@ -51,11 +51,10 @@
                 <form action="{% url 'place_bid' %}" method="POST">
                     {% csrf_token %}
                     <div class="form-floating">
-                        <p>2 bid(s) so far. Your bid is the current bid.</p>
+                        <h6 style="font-size: 14px;">{{ listing.bid_count }} bid(s) so far. {{ your_or_not }}</h6>
                         <input type="hidden" name="id" value="{{ listing.id }}">
                         <input type="number" class="form-control" name="price" placeholder="Bid"  style="height: 40px">
-                        <br>
-                        <button class="btn btn-primary" type="submit">Place bid</button>
+                        <button class="btn btn-primary" style="margin-top: 10px;" type="submit">Place bid</button>
                     </div>
                 </form>
             </div>

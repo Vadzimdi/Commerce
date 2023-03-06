@@ -37,9 +37,17 @@ def look_for_c(com):
     return c
 
 
+def check_who_bid(user, owner_bid):
+    if user == owner_bid:
+        return "Your bid is the current bid."
+    else:
+        return ""
+
+
 def listing(request, list_id):
     current_listing = Listing.objects.get(id=list_id)
     user = request.user
+    z = check_who_bid(user, current_listing.start_bid.user)
     x = look_for_x(user, current_listing.watchlist.all())
     com = current_listing.comments.all()
     c = look_for_c(com)
@@ -48,6 +56,7 @@ def listing(request, list_id):
         "user_in_watchlist": x,
         "check": c,
         "comments": com,
+        "your_or_not": z,
     })
 
 
@@ -55,6 +64,7 @@ def place_bid(request):
     if request.method == "POST":
         current_listing = Listing.objects.get(pk=request.POST['id'])
         user = request.user
+        z = check_who_bid(user, current_listing.start_bid.user)
         x = look_for_x(user, current_listing.watchlist.all())
         current_price = current_listing.start_bid.bid
         new_price = int(request.POST['price'])
@@ -68,18 +78,24 @@ def place_bid(request):
                 "user_in_watchlist": x,
                 "check": c,
                 "comments": com,
-                "alert_message": message
+                "alert_message": message,
+                "your_or_not": z,
             })
         else:
             current_listing.start_bid.bid = new_price
+            current_listing.start_bid.user = request.user
             current_listing.start_bid.save()
+            current_listing.bid_count += 1
+            current_listing.save()
+            z = check_who_bid(user, current_listing.start_bid.user)
             message = "The bid update successful"
             return render(request, "auctions/cur_listing.html", {
                 "listing": current_listing,
                 "user_in_watchlist": x,
                 "check": c,
                 "comments": com,
-                "successful_message": message
+                "successful_message": message,
+                "your_or_not": z,
             })
 
 
