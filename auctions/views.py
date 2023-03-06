@@ -20,26 +20,69 @@ def index(request):
     })
 
 
-def listing(request, list_id):
-    current_listing = Listing.objects.get(id=list_id)
-    user = request.user
-    if user in current_listing.watchlist.all():
+def look_for_x(user, watch_list):
+    if user in watch_list:
         x = True
     else:
         x = False
-    com = current_listing.comments.all()
+    return x
+
+
+def look_for_c(com):
     try:
         c = com[0]
         c = True
     except BaseException:
         c = False
+    return c
 
+
+def listing(request, list_id):
+    current_listing = Listing.objects.get(id=list_id)
+    user = request.user
+    x = look_for_x(user, current_listing.watchlist.all())
+    com = current_listing.comments.all()
+    c = look_for_c(com)
     return render(request, "auctions/cur_listing.html", {
         "listing": current_listing,
         "user_in_watchlist": x,
         "check": c,
-        "comments": com
+        "comments": com,
     })
+
+
+def place_bid(request):
+    if request.method == "POST":
+        current_listing = Listing.objects.get(pk=request.POST['id'])
+        user = request.user
+        x = look_for_x(user, current_listing.watchlist.all())
+        current_price = current_listing.start_bid.bid
+        new_price = int(request.POST['price'])
+        com = current_listing.comments.all()
+        c = look_for_c(com)
+
+        if new_price < current_price:
+            message = "The bid must be at least as large as the current bid"
+            return render(request, "auctions/cur_listing.html", {
+                "listing": current_listing,
+                "user_in_watchlist": x,
+                "check": c,
+                "comments": com,
+                "alert_message": message
+            })
+        else:
+            current_listing.start_bid.bid = new_price
+            current_listing.start_bid.save()
+            message = "The bid update successful"
+            return render(request, "auctions/cur_listing.html", {
+                "listing": current_listing,
+                "user_in_watchlist": x,
+                "check": c,
+                "comments": com,
+                "successful_message": message
+            })
+
+
 
 
 def show_watchlist(request):
@@ -89,7 +132,8 @@ def new_listing(request):
             content=content,
             start_bid=b_user,
             url=url,
-            category=category
+            category=category,
+            owner=current_user,
         )
         new_list.save()
         return HttpResponseRedirect(reverse("index"))
@@ -109,9 +153,6 @@ def comment(request):
         current_listing = Listing.objects.get(pk=request.POST['id'])
         current_listing.comments.add(com)
         return HttpResponseRedirect(reverse("listing", args=(request.POST['id'],)))
-
-
-
 
 
 def login_view(request):

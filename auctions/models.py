@@ -34,6 +34,7 @@ class Listing(models.Model):
     owner = models.ForeignKey('User', on_delete=models.CASCADE, blank=True, null=True, related_name="listing_owner")
     watchlist = models.ManyToManyField('User', blank=True, related_name="watch_list")
     comments = models.ManyToManyField('Comments', blank=True, related_name="comments")
+    bid_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.title}, {self.start_bid}, {self.is_published}, {self.category}"
