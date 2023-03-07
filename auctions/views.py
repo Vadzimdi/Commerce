@@ -7,15 +7,29 @@ from django.urls import reverse
 from .models import *
 
 
-def index(request):
-    list_all = Listing.objects.all()
+def check_if_not_empty(all_objects):
     try:
-        c = list_all[0]
+        c = all_objects[0]
         c = True
     except BaseException:
         c = False
+    return c
+
+
+def index(request):
+    list_all = Listing.objects.all()
+    c = check_if_not_empty(list_all)
     return render(request, "auctions/index.html", {
         "all_listings": list_all,
+        "check": c
+    })
+
+
+def categories(request):
+    all_cat = Category.objects.all()
+    c = check_if_not_empty(all_cat)
+    return render(request, "auctions/categories.html", {
+        "all_cat": all_cat,
         "check": c
     })
 
@@ -42,6 +56,13 @@ def check_who_bid(user, owner_bid):
         return "Your bid is the current bid."
     else:
         return ""
+
+
+def select_cat(request, slug_name):
+    listing_filter = Listing.objects.filter(category__slug=slug_name)
+    return render(request, "auctions/selected_cat.html", {
+        "all_listings": listing_filter,
+    })
 
 
 def listing(request, list_id):
@@ -97,8 +118,6 @@ def place_bid(request):
                 "successful_message": message,
                 "your_or_not": z,
             })
-
-
 
 
 def show_watchlist(request):

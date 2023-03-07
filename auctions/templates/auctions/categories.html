@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Categories</h2>
+        {% if check %}
+          <ul>
+            {% for cat in all_cat %}
+              <li><a href="{% url 'select_cat' cat.slug %}">{{ cat }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+{% endblock %}
