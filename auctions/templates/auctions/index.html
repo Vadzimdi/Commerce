@@ -5,6 +5,7 @@
             <div class="row row-cols-2 row-cols-md-4 g-2">
                 {% if check %}
                     {% for listing in all_listings %}
+                        {% if listing.is_published %}
                         <div class="col">
                             <div class="card h-100">
                                 <a href="{% url 'listing' listing.id %}"><img src="{{ listing.url }}" class="card-img-top" alt="Photo"></a>
@@ -17,6 +18,7 @@
                             </div>
                             </div>
                         </div>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
             </div>

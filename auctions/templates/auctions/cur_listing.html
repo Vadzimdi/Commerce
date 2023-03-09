@@ -12,7 +12,6 @@
 
 
 
-
     </style>
     <div>
       <div>
@@ -29,6 +28,14 @@
                         <button class="btn btn-info" type="submit">Add to Watchlist</button>
                     {% endif %}
                 </form>
+          </div>
+          <div class="tit-wat-cl">
+              <form action="{% url 'close_auction' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    {% if owner %}
+                        <button type="submit" class="btn btn-outline-warning">Close Auction</button>
+                    {% endif %}
+              </form>
           </div>
       </div>
         <div class="row row-cols-1 row-cols-md-2 g-4">

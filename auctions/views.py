@@ -58,6 +58,28 @@ def check_who_bid(user, owner_bid):
         return ""
 
 
+def check_who_owner(user, owner):
+    if user == owner:
+        return True
+    else:
+        return False
+
+
+def close_auction(request, list_id):
+    current_listing = Listing.objects.get(id=list_id)
+    current_listing.is_published = False
+    current_listing.save()
+    return HttpResponseRedirect(reverse("index"))
+
+
+def win(request):
+    pass
+
+
+def lose(request):
+    pass
+
+
 def select_cat(request, slug_name):
     listing_filter = Listing.objects.filter(category__slug=slug_name)
     return render(request, "auctions/selected_cat.html", {
@@ -72,12 +94,14 @@ def listing(request, list_id):
     x = look_for_x(user, current_listing.watchlist.all())
     com = current_listing.comments.all()
     c = look_for_c(com)
+    y = check_who_owner(user, current_listing.owner)
     return render(request, "auctions/cur_listing.html", {
         "listing": current_listing,
         "user_in_watchlist": x,
         "check": c,
         "comments": com,
         "your_or_not": z,
+        "owner": y
     })
 
 
@@ -91,6 +115,7 @@ def place_bid(request):
         new_price = int(request.POST['price'])
         com = current_listing.comments.all()
         c = look_for_c(com)
+        y = check_who_owner(user, current_listing.owner)
 
         if new_price < current_price:
             message = "The bid must be at least as large as the current bid"
@@ -101,6 +126,7 @@ def place_bid(request):
                 "comments": com,
                 "alert_message": message,
                 "your_or_not": z,
+                "owner": y
             })
         else:
             current_listing.start_bid.bid = new_price
@@ -117,6 +143,7 @@ def place_bid(request):
                 "comments": com,
                 "successful_message": message,
                 "your_or_not": z,
+                "owner": y
             })
 
 
