@@ -90,19 +90,28 @@ def select_cat(request, slug_name):
 def listing(request, list_id):
     current_listing = Listing.objects.get(id=list_id)
     user = request.user
-    z = check_who_bid(user, current_listing.start_bid.user)
-    x = look_for_x(user, current_listing.watchlist.all())
-    com = current_listing.comments.all()
-    c = look_for_c(com)
-    y = check_who_owner(user, current_listing.owner)
-    return render(request, "auctions/cur_listing.html", {
-        "listing": current_listing,
-        "user_in_watchlist": x,
-        "check": c,
-        "comments": com,
-        "your_or_not": z,
-        "owner": y
-    })
+    if current_listing.is_published:
+        z = check_who_bid(user, current_listing.start_bid.user)
+        x = look_for_x(user, current_listing.watchlist.all())
+        com = current_listing.comments.all()
+        c = look_for_c(com)
+        y = check_who_owner(user, current_listing.owner)
+        return render(request, "auctions/cur_listing.html", {
+            "listing": current_listing,
+            "user_in_watchlist": x,
+            "check": c,
+            "comments": com,
+            "your_or_not": z,
+            "owner": y
+        })
+    else:
+        if current_listing.start_bid.user == user:
+            return render(request, "auctions/win.html")
+
+        else:
+            return render(request, "auctions/lose.html")
+
+
 
 
 def place_bid(request):
